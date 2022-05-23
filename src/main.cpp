@@ -1,5 +1,8 @@
 #include <iostream>
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 int main() {
-    std::cout << "Hello, Worldd!\n";
+    std::cout << "Hello, World!\n";
 }
