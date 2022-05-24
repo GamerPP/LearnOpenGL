@@ -16,6 +16,7 @@ public:
 
     GLint GetUniformLocation(const std::string& name) const;
     void Enable();
+    void Disable();
 
     unsigned int m_ID;
     bool m_DeleteOnDestruct;

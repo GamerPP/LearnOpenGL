@@ -3,11 +3,15 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <SOIL/SOIL.h>
 
 #include "Shader/Shader.hpp"
 #include "Objects/ElementArray.hpp"
 #include "Objects/VertexBuffer.hpp"
 #include "Objects/VertexArray.hpp"
+#include "Texture/Texture.hpp"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -16,13 +20,16 @@ void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 void ProcessInput(GLFWwindow* window);
 
 GLfloat vertices[] = {
-     0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // Bottom Right
-    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // Bottom Left
-     0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // Top 
+    // Positions         // Colors          // Texture Coords
+     0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  1.0f, 1.0f, // Top Right
+     0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, // Bottom Right
+    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f, // Bottom Left
+    -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f // Top Left 
 };
 
 GLuint indices[] = {
-    0, 1, 2
+    0, 1, 3,
+    1, 2, 3
 }; 
 
 int main() {
@@ -72,13 +79,25 @@ int main() {
     VertexArray vao; vao.Bind();
 
     // Attach the vertex buffer to the vertex array
-    vao.AttachVertexBuffer(vbo, 0, 3, GL_FLOAT, sizeof(GLfloat) * 6, (GLvoid*)0);
-    vao.AttachVertexBuffer(vbo, 1, 3, GL_FLOAT, sizeof(GLfloat) * 6, (GLvoid*)(3 * sizeof(GLfloat)));
+    vao.AttachVertexBuffer(vbo, 0, 3, GL_FLOAT, sizeof(GLfloat) * 8, (GLvoid*)0);
+    vao.AttachVertexBuffer(vbo, 1, 3, GL_FLOAT, sizeof(GLfloat) * 8, (GLvoid*)(3 * sizeof(GLfloat)));
+    vao.AttachVertexBuffer(vbo, 2, 2, GL_FLOAT, sizeof(GLfloat) * 8, (GLvoid*)(6 * sizeof(GLfloat)));
 
     // Unbind objects
     vao.Unbind();
     vbo.Unbind();
     ebo.Unbind();
+    shader.Disable();
+
+    // Create the textures
+    Texture texture1("container.jpg", GL_TEXTURE_2D, 0);
+    Texture texture2("awesomeface.png", GL_TEXTURE_2D, 1);
+
+    // Set the shader's texture samplers
+    shader.Enable();
+    glUniform1i(shader.GetUniformLocation("uTexture1"), 0);
+    glUniform1i(shader.GetUniformLocation("uTexture2"), 1);
+    shader.Disable();
 
     // Set the clear color
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
@@ -90,7 +109,7 @@ int main() {
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Bind shader and objects
+        // Bind shader, texture, and objects
         shader.Enable();
         vao.Bind();
         ebo.Bind();

@@ -109,3 +109,7 @@ GLint Shader::GetUniformLocation(const std::string& name) const {
 void Shader::Enable() {
     glUseProgram(m_ID);
 };
+
+void Shader::Disable() {
+    glUseProgram(0);
+};
