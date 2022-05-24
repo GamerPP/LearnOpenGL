@@ -16,15 +16,13 @@ void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 void ProcessInput(GLFWwindow* window);
 
 GLfloat vertices[] = {
-     0.5f,  0.5f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left 
+     0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // Bottom Right
+    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // Bottom Left
+     0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // Top 
 };
 
 GLuint indices[] = {
-    0, 1, 3,   // first triangle
-    1, 2, 3    // second triangle
+    0, 1, 2
 }; 
 
 int main() {
@@ -51,8 +49,8 @@ int main() {
         glfwTerminate();
         return -1;
     }
-    glfwMakeContextCurrent(window);
-
+    glfwMakeContextCurrent(window); 
+    
     // Initialize GLEW and exit if it fails
     if (glewInit() != GLEW_OK) {
         std::cout << "Failed to initialize GLEW" << std::endl;
@@ -74,7 +72,8 @@ int main() {
     VertexArray vao; vao.Bind();
 
     // Attach the vertex buffer to the vertex array
-    vao.AttachVertexBuffer(vbo, 0, 3, GL_FLOAT, sizeof(GLfloat) * 3, 0);
+    vao.AttachVertexBuffer(vbo, 0, 3, GL_FLOAT, sizeof(GLfloat) * 6, (GLvoid*)0);
+    vao.AttachVertexBuffer(vbo, 1, 3, GL_FLOAT, sizeof(GLfloat) * 6, (GLvoid*)(3 * sizeof(GLfloat)));
 
     // Unbind objects
     vao.Unbind();

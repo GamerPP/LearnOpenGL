@@ -47,7 +47,7 @@ Shader::Shader(const std::string vertexPath, const std::string fragmentPath, boo
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
         std::cout << "Failed to compile vertex shader: " << infoLog << std::endl;
         return;
-    }
+    } std::cout << "Successfully compiled vertex shader.\n";
 
     // Create a fragment shader and compile it
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -60,7 +60,7 @@ Shader::Shader(const std::string vertexPath, const std::string fragmentPath, boo
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
         std::cout << "Failed to compile fragment shader: " << infoLog << std::endl;
         return;
-    }
+    } std::cout << "Successfully compiled fragment shader.\n";
 
     // Create a shader program and attach the vertex and fragment shaders
     m_ID = glCreateProgram();
@@ -76,7 +76,7 @@ Shader::Shader(const std::string vertexPath, const std::string fragmentPath, boo
         glGetProgramInfoLog(m_ID, 512, NULL, infoLog);
         std::cout << "Failed to link shader program: " << infoLog << std::endl;
         return;
-    }
+    } std::cout << "Successfully linked shader program.\n";
 
     // Delete the shaders as they are no longer needed
     glDeleteShader(vertex);
@@ -97,6 +97,10 @@ GLint Shader::GetUniformLocation(const std::string& name) const {
         return locationSearch->second;
 
     GLint location = glGetUniformLocation(m_ID, name.c_str());
+    if (location == -1) {
+        std::cout << "Could not find uniform: \"" << name << "\"\n";
+        return -1;
+    }
     m_UniformLocationCache[name] = location;
 
     return location;
