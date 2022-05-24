@@ -35,21 +35,30 @@ add_subdirectory(external/glm)
 target_include_directories(${PROJECT_NAME} PUBLIC 
     external/glfw/include 
     external/glew/include 
+    external/soil/include
     external/imgui
     external/glm
     external)
 
 file(GLOB IMGUI_SOURCE "external/imgui/*.cpp" "external/imgui/backends/imgui_impl_glfw.cpp" "external/imgui/backends/imgui_impl_opengl3.cpp")
+
 add_library(imgui ${IMGUI_SOURCE})
 target_include_directories(imgui PRIVATE 
     external/imgui
     external/glfw/include)
 
+file(GLOB SOIL_SOURCE "external/soil/src/*.c")
+
+add_library(soil ${SOIL_SOURCE})
+target_include_directories(soil PRIVATE
+    external/soil/include
+)
+
 target_link_directories(${PROJECT_NAME} PRIVATE 
     external/glfw/src
     external/glew/build)
 
-target_link_libraries(${PROJECT_NAME} glfw libglew_static GL imgui)
+target_link_libraries(${PROJECT_NAME} glfw libglew_static GL imgui soil)
 
 add_custom_command(TARGET ${PROJECT_NAME} PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E 
