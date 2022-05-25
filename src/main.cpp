@@ -99,6 +99,7 @@ int main() {
     glUniform1i(shader.GetUniformLocation("uTexture2"), 1);
     shader.Disable();
 
+
     // Set the clear color
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     // Loop until the user closes the window
@@ -113,6 +114,11 @@ int main() {
         shader.Enable();
         vao.Bind();
         ebo.Bind();
+    
+        glm::mat4 trans(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans,glm::radians((GLfloat)glfwGetTime() * 50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        glUniformMatrix4fv(shader.GetUniformLocation("transform"), 1, GL_FALSE, glm::value_ptr(trans));
 
         // Render
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
